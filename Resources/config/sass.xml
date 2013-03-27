@@ -1,0 +1,35 @@
+<?xml version="1.0" ?>
+<!--
+    Sass service definition
+
+    Toolchain configuration for the sass css compilation tool
+
+    http://sass-lang.com/
+-->
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <!--
+            Sass binary path
+        -->
+        <parameter key="toolchain.sass.bin" />
+
+        <!-- Class mapping -->
+        <parameter key="toolchain.sass.build_configuration.class">JJs\Bundle\ToolchainBundle\Sass\BuildConfiguration</parameter>
+    </parameters>
+
+    <services>
+        <!--
+            Sass build configuration
+
+            Manages the sass build configuration
+        -->
+        <service id="toolchain.sass.build_configuration" class="%toolchain.sass.build_configuration.class%">
+            <tag name="toolchain.tool" />
+            <argument id="kernel" type="service" />
+            <argument>%toolchain.sass.bin%</argument>
+        </service>
+    </services>
+</container>

@@ -1,0 +1,49 @@
+<?xml version="1.0" ?>
+<!--
+    Toolchain Services
+
+    Services and paramters which are used by in general by the toolchain bundle.
+-->
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <!--
+            Working directory
+
+            Absolute path to the working directory where temporary build
+            resources will be written and relative paths will be accessed from.
+        -->
+        <parameter key="toolchain.working_dir">%kernel.root_dir%</parameter>
+
+        <!--
+            Javascript output directory
+
+            Absolute path where relative javascript output files will be written
+        -->
+        <parameter key="toolchain.js_dir">%kernel.root_dir%/../web/js</parameter>
+
+        <!--
+            Web directory
+
+            Absolute base path where web resources reside. When the output
+            directory is not within the output path, this method may not find
+            the correct file.
+        -->
+        <parameter key="toolchain.web_dir">%kernel.root_dir%/../web</parameter>
+
+        <!-- Class mapping -->
+        <parameter key="toolchain.class">JJs\Bundle\ToolchainBundle\Toolchain\Toolchain</parameter>
+    </parameters>
+
+    <services>
+        <!--
+            Toolchain
+
+            Manages the tools which can be used as servers, builds or
+            otherwise.
+        -->
+        <service id="toolchain" class="%toolchain.class%" />
+    </services>
+</container>

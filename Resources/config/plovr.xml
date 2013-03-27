@@ -1,0 +1,61 @@
+<?xml version="1.0" ?>
+<!--
+    Plovr Services
+
+    Configures the parameters and services which are required to compile the
+    google closure scripts using plovr.
+-->
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <!--
+            Plovr Compiler (binary)
+
+            Absolute path to the plovr executible to use when compiling google
+            closure javascript.
+        -->
+        <parameter key="toolchain.plovr.bin" />
+
+        <!--
+            Plovr Compiler (jar)
+
+            Absolute path to the plovr jar file to use when compiling google
+            closure javascript.
+
+            TODO: Add compatibility for the jar file
+        <parameter key="toolchain.plovr.jar" />
+        -->
+
+        <!--
+            Plovr Compile Options
+
+            These options are merged with the plovr options defined in
+            individual bundles prior to setting up the compilation server.
+        -->
+        <parameter key="toolchain.plovr.options" type="collection">
+            <parameter key="mode">ADVANCED</parameter>
+            <parameter key="level">VERBOSE</parameter>
+        </parameter>
+
+        <!-- Plovr classes -->
+        <parameter key="toolchain.plovr.build_manager.class">JJs\Bundle\ToolchainBundle\Plovr\BuildManager</parameter>
+        <parameter key="twig.extension.plovr.class">JJs\Bundle\ToolchainBundle\Twig\PlovrTwigExtension</parameter>
+    </parameters>
+
+    <services>
+        <!-- Plovr Build Manager -->
+        <service id="toolchain.plovr.build_manager" class="%toolchain.plovr.build_manager.class%">
+            <tag name="toolchain.tool" />
+            <argument id="kernel" type="service"></argument>
+            <argument>%toolchain.plovr.bin%</argument>
+        </service>
+
+        <!-- Plovr Twig Extension -->
+        <service id="twig.extension.plovr" class="%twig.extension.plovr.class%" public="false">
+            <tag name="twig.extension" />
+            <argument id="toolchain.plovr.build_manager" type="service" />
+        </service>
+    </services>
+</container>
