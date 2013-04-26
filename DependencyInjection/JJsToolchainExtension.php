@@ -92,11 +92,20 @@ class JJsToolchainExtension extends Extension
         // Map values from the configuration into the service container
         $container->setParameter("toolchain.plovr.bin", $config['bin']);
 
+        // Create a map of build defaults
+        $defaults = [];
+        foreach (['closure_library'] as $key) {
+            if (array_key_exists($key, $config)) {
+                $defaults[$key] = $config[$key];
+            }
+        }
+
         // Configure each bundle in turn
         if (array_key_exists('builds', $config)) {
             foreach ($config['builds'] as $id => $options) {
                 $options['id'] = $id;
-                $this->loadBuildConfig($options, $container);
+
+                $this->loadBuildConfig(array_merge($defaults, $options), $container);
             }
         }
     }
@@ -118,6 +127,14 @@ class JJsToolchainExtension extends Extension
             }
 
             unset($config[$prefix]);
+        }
+
+        // Rewrite config keys
+        foreach (['closure_library' => 'closure-library'] as $configKey => $plovrKey) {
+            if (!array_key_exists($configKey, $config)) continue;
+
+            $config[$plovrKey] = $config[$configKey];
+            unset($config[$configKey]);
         }
 
         $compiler = $container->getDefinition('toolchain.plovr.build_manager');
