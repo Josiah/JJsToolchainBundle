@@ -21,11 +21,18 @@ use Symfony\Component\Process\ProcessBuilder;
 class BuildManager implements BuildInterface, ServerInterface
 {
     /**
-     * Absolute path to the plovr executable
+     * Java executable
      * 
      * @var string
      */
-    protected $bin;
+    protected $java = 'java';
+
+    /**
+     * Plovr JAR file
+     * 
+     * @var string
+     */
+    protected $jar;
 
     /**
      * Application Kernel
@@ -63,10 +70,10 @@ class BuildManager implements BuildInterface, ServerInterface
      * @param string                   $bin      Plovr executable path
      * @param OptionsResolverInterface $resolver Options resolver
      */
-    public function __construct(KernelInterface $kernel, $bin, OptionsResolverInterface $resolver = null)
+    public function __construct(KernelInterface $kernel, $jar, OptionsResolverInterface $resolver = null)
     {
         $this->kernel = $kernel;
-        $this->bin    = $bin;
+        $this->jar    = $jar;
         $this->resolver = $resolver ?: $this->createBuildOptionsResolver();
         $this->workingDirectory = $kernel->getRootDir();
     }
@@ -106,6 +113,7 @@ class BuildManager implements BuildInterface, ServerInterface
                 'print-input-delimiter' => false,
             ])
             ->setOptional([
+                'closure-library',
                 'paths',
                 'inputs',
                 'externs',
@@ -209,7 +217,9 @@ class BuildManager implements BuildInterface, ServerInterface
     {
         // Generate the standard build command
         $builder = (new ProcessBuilder)
-            ->add($this->bin)
+            ->add($this->java)
+            ->add('-jar')
+            ->add($this->jar)
             ->add($command)
             ->setWorkingDirectory($this->workingDirectory)
         ;
